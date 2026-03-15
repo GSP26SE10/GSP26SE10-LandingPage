@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "@/components/Navbar";
+import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import { Check } from "lucide-react";
 
@@ -112,7 +112,7 @@ export default function AboutPage() {
       className="min-h-screen bg-[#FFFAF0] text-[#1f1f1f]"
       style={{ fontFamily: "Montserrat, sans-serif" }}
     >
-      <Navbar />
+      <NavBar />
 
       <main>
         {/* HERO */}
