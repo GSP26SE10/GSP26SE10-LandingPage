@@ -1,0 +1,323 @@
+import React from "react";
+import NavBar from "@/components/NavBar";
+import Footer from "@/components/Footer";
+
+export default function AboutPage() {
+  const stats = [
+    { value: "5+", label: "Năm kinh nghiệm" },
+    { value: "30+", label: "Menu linh hoạt" },
+    { value: "99%", label: "Khách hàng hài lòng" },
+  ];
+
+  const teamMembers = [
+    {
+      id: 1,
+      name: "Nguyễn Minh",
+      role: "Founder",
+      image:
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop",
+    },
+    {
+      id: 2,
+      name: "Hoàng An",
+      role: "Operation Lead",
+      image:
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop",
+    },
+    {
+      id: 3,
+      name: "Lan Chi",
+      role: "Customer Success",
+      image:
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800&auto=format&fit=crop",
+    },
+    {
+      id: 4,
+      name: "Thảo My",
+      role: "Event Planner",
+      image:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=800&auto=format&fit=crop",
+    },
+    {
+      id: 5,
+      name: "Quốc Bảo",
+      role: "Service Coordinator",
+      image:
+        "https://images.unsplash.com/photo-1504257432389-52343af06ae3?q=80&w=800&auto=format&fit=crop",
+    },
+  ];
+
+  const serviceGroups = [
+    {
+      title: "Gói gia đình",
+      price: "Từ 2.500.000 VNĐ",
+      items: [
+        "Thực đơn linh hoạt theo số lượng khách",
+        "Phù hợp sinh nhật, họp mặt, kỷ niệm",
+        "Setup nhanh gọn tại nhà",
+      ],
+      button: "Liên hệ ngay",
+      featured: false,
+    },
+    {
+      title: "Gói tiệc công ty",
+      price: "Từ 4.000.000 VNĐ",
+      items: [
+        "Phục vụ sự kiện nội bộ, khai trương, hội họp",
+        "Có nhân sự hỗ trợ và điều phối",
+        "Phù hợp quy mô vừa và lớn",
+      ],
+      button: "Đặt lịch",
+      featured: false,
+    },
+    {
+      title: "Gói tùy chỉnh",
+      price: "Theo yêu cầu / theo món",
+      items: [
+        "Điều chỉnh thực đơn theo ngân sách",
+        "Cá nhân hóa món ăn và phong cách phục vụ",
+        "Tư vấn theo từng loại sự kiện",
+      ],
+      button: "Chọn gói",
+      featured: true,
+    },
+  ];
+
+  const milestones = [
+    {
+      year: "2022",
+      title: "Khởi đầu ý tưởng",
+      desc: "Bookfet được hình thành với mục tiêu giúp việc đặt tiệc trở nên đơn giản, nhanh chóng và minh bạch hơn.",
+    },
+    {
+      year: "2023",
+      title: "Mở rộng dịch vụ",
+      desc: "Bổ sung thêm nhiều gói buffet gia đình, công ty và nâng cao trải nghiệm đặt tiệc trực tuyến.",
+    },
+    {
+      year: "2024",
+      title: "Chuẩn hóa vận hành",
+      desc: "Tối ưu quy trình xác nhận đơn hàng, điều phối nhân sự và theo dõi tiến độ thực hiện dịch vụ.",
+    },
+    {
+      year: "2025",
+      title: "Tăng trưởng bền vững",
+      desc: "Phát triển hệ sinh thái dịch vụ tiệc toàn diện với trải nghiệm khách hàng được đặt làm trọng tâm.",
+    },
+  ];
+
+  return (
+    <div
+      className="min-h-screen bg-[#FFFAF0] text-[#1f1f1f]"
+      style={{ fontFamily: "Montserrat, sans-serif" }}
+    >
+      <NavBar />
+
+      <main>
+        {/* HERO */}
+        <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-6 pb-10">
+          <div className="rounded-[10px] bg-[#2E6418] px-6 py-12 md:px-10 md:py-14 text-center text-[#FFFAF0]">
+            <h1 className="text-[30px] md:text-[44px] font-bold uppercase leading-[1.2] tracking-[-0.01em]">
+              HÀNH TRÌNH XÂY DỰNG DỊCH VỤ
+              <br />
+              ĐẶT TIỆC CHUYÊN NGHIỆP
+            </h1>
+
+            <p className="mt-7 max-w-[770px] mx-auto text-[15px] md:text-[16px] leading-7 text-white/90">
+              BOOKFET ra đời với mong muốn đơn giản hóa việc đặt tiệc buffet tại
+              nhà và công ty, giúp khách hàng dễ dàng tổ chức sự kiện chỉ với
+              vài thao tác trực tuyến, nhanh chóng và minh bạch.
+            </p>
+          </div>
+        </section>
+
+        {/* INTRO */}
+        <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-14">
+          <br />
+          <br />
+          <h2 className="text-[#2E6418] text-[34px] md:text-[50px] font-bold uppercase leading-none">
+            BOOKFET BẮT ĐẦU TỪ ĐÂU
+          </h2>
+
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-x-10 gap-y-6">
+            <p className="max-w-[560px] text-[16px] md:text-[17px] leading-7 text-black/80">
+              <span className="font-bold text-black">BOOKFET</span> được hình
+              thành từ{" "}
+              <span className="font-bold text-black">
+                nhu cầu thực tế của khách hàng và doanh nghiệp
+              </span>{" "}
+              khi việc đặt tiệc buffet còn phụ thuộc nhiều vào liên hệ thủ công,
+              thiếu minh bạch và khó quản lý.
+            </p>
+
+            <p className="max-w-[560px] text-[16px] md:text-[17px] leading-7 text-black/80">
+              Từ những đơn đặt tiệc nhỏ tại nhà, BOOKFET đã phát triển thành{" "}
+              <span className="font-bold text-black">
+                một nền tảng hỗ trợ đặt tiệc buffet chuyên nghiệp
+              </span>
+              , giúp kết nối khách hàng với các nhà cung cấp dịch vụ uy tín và
+              đội ngũ phục vụ chất lượng.
+            </p>
+          </div>
+
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-[1.45fr_0.55fr] gap-8 items-start">
+            <div>
+              <img
+                src="https://enrestaurant.vn/wp-content/uploads/2025/04/482025908_960788582913072_5367280846789434243_n-1-1024x683.jpg"
+                alt="Bookfet origin"
+                className="w-full h-[260px] md:h-[360px] lg:h-[420px] object-cover rounded-[10px]"
+              />
+            </div>
+
+            <div className="lg:pl-2">
+              {stats.map((item, index) => (
+                <div
+                  key={item.label}
+                  className={`${index !== stats.length - 1 ? "border-b border-black/20 pb-8 mb-8" : ""}`}
+                >
+                  <p className="text-[#2E6418] text-[38px] md:text-[52px] font-bold leading-none">
+                    {item.value}
+                  </p>
+                  <p className="mt-3 text-[18px] leading-7 text-black/75">
+                    {item.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* TEAM */}
+        <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-14">
+          <br />
+          <br />
+          <h2 className="text-[#E85E1B] text-[34px] md:text-[48px] font-bold uppercase leading-none">
+            ĐỘI NGŨ ĐỨNG SAU BOOKFET
+          </h2>
+
+          {/* top row */}
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-5 max-w-[980px]">
+            <div className="rounded-[8px] bg-[#DCE8CC] overflow-hidden">
+              <img
+                src={teamMembers[0].image}
+                alt={teamMembers[0].name}
+                className="w-full h-[260px] md:h-[300px] object-cover"
+              />
+            </div>
+
+            <div className="rounded-[8px] bg-[#DCE8CC] overflow-hidden">
+              <img
+                src={teamMembers[1].image}
+                alt={teamMembers[1].name}
+                className="w-full h-[260px] md:h-[300px] object-cover"
+              />
+            </div>
+
+            <div className="rounded-[8px] bg-[#2E6418] text-[#DCE8CC] p-6 md:p-7 min-h-[260px] md:min-h-[300px] flex flex-col justify-between">
+              <div className="text-[46px] leading-none font-bold">“</div>
+
+              <p className="text-[16px] md:text-[17px] leading-8 text-[#DCE8CC] -mt-6">
+                Chúng tôi là sự kết hợp giữa những người yêu công nghệ, quản lý
+                dịch vụ và tổ chức sự kiện, cùng chung mục tiêu nâng cao trải
+                nghiệm đặt tiệc buffet.
+              </p>
+
+              <div className="text-[46px] leading-none font-bold self-end">
+                ”
+              </div>
+            </div>
+          </div>
+
+          {/* bottom row */}
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-5 max-w-[980px] ml-0 md:ml-[185px]">
+            <div className="rounded-[8px] bg-[#DCE8CC] overflow-hidden">
+              <img
+                src={teamMembers[2].image}
+                alt={teamMembers[2].name}
+                className="w-full h-[260px] md:h-[300px] object-cover"
+              />
+            </div>
+
+            <div className="rounded-[8px] bg-[#DCE8CC] overflow-hidden">
+              <img
+                src={teamMembers[3].image}
+                alt={teamMembers[3].name}
+                className="w-full h-[260px] md:h-[300px] object-cover"
+              />
+            </div>
+
+            <div className="rounded-[8px] bg-[#DCE8CC] overflow-hidden">
+              <img
+                src={teamMembers[4].image}
+                alt={teamMembers[4].name}
+                className="w-full h-[260px] md:h-[300px] object-cover"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* QUOTE */}
+        <section className="w-full pb-14">
+          <div
+            className="min-h-[230px] md:min-h-[260px] flex items-center justify-center text-center px-6"
+            style={{
+              backgroundImage:
+                'url("https://st.depositphotos.com/1006269/57018/i/450/depositphotos_570183092-stock-photo-old-crumpled-paper-texture-background.jpg")',
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <div className="max-w-[1200px]">
+              <h2 className="text-[#2E6418] text-[34px] md:text-[52px] font-bold uppercase leading-none">
+                QUOTES
+              </h2>
+
+              <p className="mt-6 text-[#E85E1B] text-[16px] md:text-[24px] font-semibold leading-8 md:leading-10">
+                “Chúng tôi tin rằng việc tổ chức tiệc buffet nên đơn giản, minh
+                bạch và đáng tin cậy – từ đặt tiệc, chuẩn bị đến phục vụ.”
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* JOURNEY */}
+        <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-20">
+          <br />
+          <br />
+          <h2 className="text-[#2E6418] text-[34px] md:text-[52px] font-bold uppercase text-center leading-none">
+            HÀNH TRÌNH PHÁT TRIỂN BOOKFET
+          </h2>
+
+          <div className="mt-12 relative">
+            {/* line */}
+            <div className="hidden md:block absolute left-[8%] right-[8%] top-[42px] h-[1px] bg-black/20" />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-6">
+              {milestones.map((item) => (
+                <div key={item.year} className="text-center relative">
+                  <p className="text-black/35 text-[16px] md:text-[18px]">
+                    {item.year}
+                  </p>
+
+                  <div className="mt-5 mb-6 flex justify-center">
+                    <div className="w-[8px] h-[8px] rounded-full bg-black/80" />
+                  </div>
+
+                  <h3 className="text-[#5C8F57] text-[20px] md:text-[22px] font-semibold leading-7">
+                    {item.title}
+                  </h3>
+
+                  <p className="mt-3 text-[15px] md:text-[16px] leading-7 text-black/45 max-w-[260px] mx-auto">
+                    {item.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

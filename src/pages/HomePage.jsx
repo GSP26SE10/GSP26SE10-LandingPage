@@ -328,6 +328,8 @@ export default function HomePage() {
 
         {/* WHY CHOOSE */}
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-16">
+          <br />
+          <br />
           <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-10">
             <div>
               <h2 className="text-[#45B733] text-4xl md:text-5xl font-bold leading-tight">
@@ -357,6 +359,8 @@ export default function HomePage() {
 
         {/* PROMO */}
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-16">
+          <br />
+          <br />
           <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-8 items-stretch rounded-[24px] bg-[#DCE8CC] p-5 md:p-6">
             <div>
               <img
@@ -400,6 +404,8 @@ export default function HomePage() {
         </section>
         {/* FAVORITE SERVICES */}
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-16">
+          <br />
+          <br />
           <div className="flex items-center justify-between gap-4 mb-8">
             <h2 className="text-[#DE5000] text-4xl md:text-5xl font-bold">
               DỊCH VỤ ĐƯỢC KHÁCH HÀNG YÊU THÍCH
@@ -436,6 +442,8 @@ export default function HomePage() {
 
         {/* ESTIMATE TOOL */}
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-16">
+          <br />
+          <br />
           <div className="rounded-[24px] bg-[#2E6418] p-6 md:p-10">
             <h2 className="text-center text-white text-3xl md:text-5xl font-bold">
               HIỂU RÕ NHU CẦU BỮA TIỆC CỦA BẠN
@@ -559,6 +567,8 @@ export default function HomePage() {
 
         {/* PACKAGES */}
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-16">
+          <br />
+          <br />
           <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
             <h2 className="text-[#2E6418] text-4xl md:text-5xl font-bold">
               CÁC GÓI BUFFET NỔI BẬT
@@ -683,6 +693,8 @@ export default function HomePage() {
 
         {/* BIG CTA */}
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-16">
+          <br />
+          <br />
           <div className="relative overflow-hidden rounded-[20px]">
             <img
               src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1600&auto=format&fit=crop"
@@ -716,6 +728,8 @@ export default function HomePage() {
 
         {/* TESTIMONIAL */}
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-16">
+          <br />
+          <br />
           <h2 className="text-center text-[#DE5000] text-4xl md:text-5xl font-bold">
             KHÁCH HÀNG NÓI GÌ VỀ BOOKFET
           </h2>
@@ -741,6 +755,8 @@ export default function HomePage() {
 
         {/* BLOG */}
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-16">
+          <br />
+          <br />
           <div className="flex items-center justify-between gap-4 mb-8">
             <h2 className="text-[#2E6418] text-4xl md:text-5xl font-bold">
               BLOG – KINH NGHIỆM TỔ CHỨC TIỆC
@@ -778,6 +794,8 @@ export default function HomePage() {
 
         {/* FAQ */}
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-20">
+          <br />
+          <br />
           <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-10">
             <div>
               <h2 className="text-[#DE5000] text-4xl md:text-5xl font-bold leading-tight">
