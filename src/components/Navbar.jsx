@@ -7,7 +7,6 @@ export default function NavBar() {
   const navItems = [
     { label: "TRANG CHỦ", href: "/" },
     { label: "GIỚI THIỆU", href: "/about" },
-    { label: "DỊCH VỤ", href: "/services" },
     { label: "BLOG", href: "/blog" },
     { label: "LIÊN HỆ", href: "/contact" },
   ];

@@ -1,6 +1,7 @@
 import React from "react";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
+import { Check } from "lucide-react";
 
 export default function AboutPage() {
   const stats = [
@@ -276,6 +277,161 @@ export default function AboutPage() {
                 “Chúng tôi tin rằng việc tổ chức tiệc buffet nên đơn giản, minh
                 bạch và đáng tin cậy – từ đặt tiệc, chuẩn bị đến phục vụ.”
               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* FLEXIBLE SERVICE */}
+        <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-14">
+          <br />
+          <br />
+          <h2 className="text-[#E85E1B] text-[34px] md:text-[48px] font-bold uppercase leading-none">
+            GÓI DỊCH VỤ LINH HOẠT – PHÙ HỢP MỌI SỰ KIỆN
+          </h2>
+
+          <div className="mt-10 grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
+            {/* LEFT CARD */}
+            <div className="group rounded-[10px] border border-[#7EA26E] bg-[#FFFAF0] p-8 text-black transition hover:bg-[#2E6418] hover:text-[#FFFAF0]">
+              <h3 className="text-[22px] md:text-[24px] font-bold uppercase">
+                GÓI GIA ĐÌNH
+              </h3>
+
+              <p className="mt-4 max-w-[300px] text-[16px] leading-7 text-black/55 transition group-hover:text-white/80">
+                Phù hợp cho tiệc tại nhà, họp mặt nhỏ, không cần cam kết dài hạn
+              </p>
+
+              <div className="mt-8">
+                <p className="text-[16px] font-semibold">Giá tham khảo</p>
+                <p className="mt-2 text-[24px] md:text-[26px] font-bold">
+                  Từ 2.500.000 VNĐ
+                  <span className="text-[16px] font-normal text-black/70 transition group-hover:text-white/80">
+                    {" "}
+                    / buổi tiệc
+                  </span>
+                </p>
+              </div>
+
+              <div className="mt-6 space-y-4 border-t border-black/15 pt-6 transition group-hover:border-white/20">
+                {[
+                  "Phục vụ 10-20 khách",
+                  "Khai vị, món chính, tráng miệng",
+                  "Setup bàn tiệc cơ bản",
+                  "Nhân sự phục vụ tiêu chuẩn",
+                  "Có thể điều chỉnh menu theo nhu cầu",
+                  "Dụng cụ ăn uống thân thiện môi trường",
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-4">
+                    <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2E6418] text-white transition group-hover:bg-[#FFFAF0] group-hover:text-[#2E6418]">
+                      <Check size={12} strokeWidth={3} />
+                    </span>
+                    <p className="text-[16px] leading-7 text-black/60 transition group-hover:text-white/85">
+                      {item}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <button className="mt-8 rounded-full border border-[#7EA26E] bg-[#FFFAF0] px-12 py-3 text-[18px] font-semibold text-[#2E6418] transition group-hover:border-[#E85E1B] group-hover:bg-[#E85E1B] group-hover:text-white">
+                CHỌN GÓI
+              </button>
+            </div>
+
+            {/* RIGHT COLUMN */}
+            <div className="grid grid-cols-1 gap-6">
+              {/* TOP RIGHT */}
+              <div className="group rounded-[10px] border border-[#7EA26E] bg-[#FFFAF0] p-8 text-black transition hover:bg-[#2E6418] hover:text-[#FFFAF0]">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-[1fr_1fr]">
+                  <div>
+                    <h3 className="text-[22px] md:text-[24px] font-bold uppercase">
+                      GÓI TIỆC CÔNG TY
+                    </h3>
+                  </div>
+
+                  <p className="text-[16px] leading-7 text-black/55 transition group-hover:text-white/80">
+                    Giải pháp toàn diện cho sự kiện doanh nghiệp và tiệc văn
+                    phòng
+                  </p>
+                </div>
+
+                <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-2">
+                  {[
+                    "Phục vụ 30-100 khách",
+                    "Theo dõi tiến độ tiệc theo thời gian thực",
+                    "Menu đa dạng, trình bày chuyên nghiệp",
+                    "Hỗ trợ xuất hóa đơn & báo cáo",
+                    "Nhân sự phục vụ & trưởng nhóm điều phối",
+                    "Linh hoạt điều chỉnh thời gian & số lượng",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-4">
+                      <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2E6418] text-white transition group-hover:bg-[#FFFAF0] group-hover:text-[#2E6418]">
+                        <Check size={12} strokeWidth={3} />
+                      </span>
+                      <p className="text-[16px] leading-7 text-black/60 transition group-hover:text-white/85">
+                        {item}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex flex-col gap-4 border-t border-black/15 pt-5 transition group-hover:border-white/20 md:flex-row md:items-center md:justify-between">
+                  <p className="text-[24px] md:text-[26px] font-bold">
+                    Từ 4.000.000 VNĐ
+                    <span className="text-[16px] font-normal text-black/70 transition group-hover:text-white/80">
+                      {" "}
+                      / buổi tiệc
+                    </span>
+                  </p>
+
+                  <button className="rounded-full border border-[#7EA26E] bg-[#FFFAF0] px-12 py-3 text-[18px] font-semibold text-[#2E6418] transition group-hover:border-[#E85E1B] group-hover:bg-[#E85E1B] group-hover:text-white">
+                    CHỌN GÓI
+                  </button>
+                </div>
+              </div>
+
+              {/* BOTTOM RIGHT */}
+              <div className="group rounded-[10px] border border-[#7EA26E] bg-[#FFFAF0] p-8 text-black transition hover:bg-[#2E6418] hover:text-[#FFFAF0]">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-[1fr_1fr]">
+                  <div>
+                    <h3 className="text-[22px] md:text-[24px] font-bold uppercase">
+                      GÓI TÙY CHỈNH
+                    </h3>
+                  </div>
+
+                  <p className="text-[16px] leading-7 text-black/55 transition group-hover:text-white/80">
+                    Dành cho sự kiện đặc biệt hoặc yêu cầu riêng
+                  </p>
+                </div>
+
+                <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-2">
+                  {[
+                    "Tùy chọn menu từ danh sách đầy đủ",
+                    "Theo dõi tiến độ tiệc theo thời gian thực",
+                    "Thêm món đặc biệt, đồ uống, tráng miệng",
+                    "Hỗ trợ xuất hóa đơn & báo cáo",
+                    "Phù hợp cho tiệc cưới, sinh nhật, sự kiện lớn",
+                    "Điều chỉnh theo ngân sách",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-4">
+                      <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2E6418] text-white transition group-hover:bg-[#FFFAF0] group-hover:text-[#2E6418]">
+                        <Check size={12} strokeWidth={3} />
+                      </span>
+                      <p className="text-[16px] leading-7 text-black/60 transition group-hover:text-white/85">
+                        {item}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex flex-col gap-4 border-t border-black/15 pt-5 transition group-hover:border-white/20 md:flex-row md:items-center md:justify-between">
+                  <p className="text-[24px] md:text-[26px] font-bold">
+                    Theo yêu cầu / theo món
+                  </p>
+
+                  <button className="rounded-full border border-[#7EA26E] bg-[#FFFAF0] px-12 py-3 text-[18px] font-semibold text-[#2E6418] transition group-hover:border-[#E85E1B] group-hover:bg-[#E85E1B] group-hover:text-white">
+                    CHỌN GÓI
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </section>
