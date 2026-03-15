@@ -1,5 +1,5 @@
 import React from "react";
-import NavBar from "@/components/NavBar";
+import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Check } from "lucide-react";
 
