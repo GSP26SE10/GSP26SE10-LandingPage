@@ -13,14 +13,15 @@ export default function NavBar() {
   ];
 
   return (
-    <header className="w-full bg-[#f6f1e7] border-b border-[#e7decf] sticky top-0 z-50">
+    <header
+      className="w-full bg-[#FFFAF0] sticky top-0 z-50"
+      style={{ fontFamily: "Montserrat, sans-serif" }}
+    >
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
-        <div className="h-20 flex items-center justify-between">
+        <div className="h-24 flex items-center justify-between">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2 shrink-0">
-            <span className="text-2xl font-extrabold tracking-wide text-[#f26a21]">
-              BOOKFET
-            </span>
+            <span className="logo-bookfet text-5xl tracking-wide">BOOKFET</span>
           </a>
 
           {/* Desktop Menu */}
