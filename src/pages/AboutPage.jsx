@@ -112,7 +112,7 @@ export default function AboutPage() {
       className="min-h-screen bg-[#FFFAF0] text-[#1f1f1f]"
       style={{ fontFamily: "Montserrat, sans-serif" }}
     >
-      <NavBar />
+      <Navbar />
 
       <main>
         {/* HERO */}
