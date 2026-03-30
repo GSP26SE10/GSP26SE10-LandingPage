@@ -2,7 +2,7 @@ import React from "react";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import {
-  ArrowRight,
+  Smartphone,
   Clock3,
   Users,
   ShieldCheck,
@@ -308,11 +308,11 @@ export default function HomePage() {
 
               <div className="mt-9 flex flex-wrap gap-4">
                 <a
-                  href="/booking"
+                  href="https://github.com/GSP26SE10/GSP26SE10-Mobile/releases/download/v1.0/bookfet.apk"
                   className="inline-flex items-center gap-3 rounded-[10px] bg-[#E8712E] px-8 py-4 text-[18px] font-medium text-[#262626] transition hover:opacity-90"
                 >
-                  Đặt tiệc ngay
-                  <ArrowRight size={18} />
+                  Tải xuống cho Android
+                  <Smartphone size={18} />
                 </a>
 
                 <a
