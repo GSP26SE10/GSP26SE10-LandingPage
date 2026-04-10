@@ -6,6 +6,7 @@ import AboutPage from "./pages/AboutPage";
 import BlogPage from "./pages/BlogPage";
 import BlogContentPage from "./pages/BlogContentPage";
 import ContactPage from "./pages/ContactPage";
+import PolicyPage from "./pages/PolicyPage";
 import {
   BrowserRouter as Router,
   Routes,
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:slug" element={<BlogContentPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/policy" element={<PolicyPage />} />
           </Routes>
           <Toaster />
         </main>

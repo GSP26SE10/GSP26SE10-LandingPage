@@ -3,6 +3,68 @@ import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import API_URL from "@/config/api";
 
+function normalizePostStatus(status) {
+  const raw = String(status ?? "").trim();
+  const lowered = raw.toLowerCase();
+
+  if (lowered === "published" || raw === "1") return "Published";
+  if (lowered === "archived" || raw === "2") return "Archived";
+  return "Draft";
+}
+
+function isPublishedPost(post) {
+  return normalizePostStatus(post?.status) === "Published";
+}
+
+function normalizeImageUrls(input) {
+  if (Array.isArray(input)) return input.filter(Boolean);
+
+  if (typeof input === "string" && input.trim()) {
+    if (input.startsWith("[")) {
+      try {
+        const parsed = JSON.parse(input);
+        return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+      } catch {
+        return [input];
+      }
+    }
+    return [input];
+  }
+
+  return [];
+}
+
+function normalizeImageUrl(url) {
+  if (!url) return "https://via.placeholder.com/1200x700?text=No+Image";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${API_URL}${url}`;
+}
+
+function getPostCoverImages(post) {
+  return normalizeImageUrls(
+    post?.coverImageFiles ||
+      post?.coverImages ||
+      post?.coverImage ||
+      post?.imgUrl ||
+      post?.imageUrls ||
+      post?.thumbnailUrl ||
+      post?.imageUrl ||
+      post?.coverImageUrl,
+  ).map(normalizeImageUrl);
+}
+
+function getPostPreviewImage(post) {
+  const covers = getPostCoverImages(post);
+  return covers[0] || "https://via.placeholder.com/1200x700?text=No+Image";
+}
+
+function formatDate(dateString) {
+  if (!dateString) return "--/--/----";
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return "--/--/----";
+  return date.toLocaleDateString("vi-VN");
+}
+
 export default function BlogPage() {
   const [categories, setCategories] = React.useState([]);
   const [posts, setPosts] = React.useState([]);
@@ -17,10 +79,10 @@ export default function BlogPage() {
 
       try {
         const [categoryRes, postRes] = await Promise.all([
-          fetch(`${API_URL}/api/blog-category`, {
+          fetch(`${API_URL}/api/blog-category?page=1&pageSize=200`, {
             headers: { accept: "*/*" },
           }),
-          fetch(`${API_URL}/api/post`, {
+          fetch(`${API_URL}/api/post?page=1&pageSize=200`, {
             headers: { accept: "*/*" },
           }),
         ]);
@@ -32,11 +94,15 @@ export default function BlogPage() {
         const categoryData = await categoryRes.json();
         const postData = await postRes.json();
 
-        const categoryItems = categoryData?.items || [];
-        const postItems = postData?.items || [];
+        const categoryItems = Array.isArray(categoryData?.items)
+          ? categoryData.items
+          : [];
+        const postItems = Array.isArray(postData?.items) ? postData.items : [];
+
+        const publishedPosts = postItems.filter(isPublishedPost);
 
         setCategories(categoryItems);
-        setPosts(postItems);
+        setPosts(publishedPosts);
       } catch (err) {
         console.error(err);
         setError("Không thể tải danh sách bài viết.");
@@ -73,7 +139,6 @@ export default function BlogPage() {
       <NavBar />
 
       <main>
-        {/* HERO */}
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-8 pb-12">
           <div className="rounded-[10px] bg-[#2E6418] px-6 py-12 md:px-10 md:py-14 text-center text-[#FFFAF0]">
             <h1 className="text-[30px] md:text-[44px] font-bold uppercase leading-[1.2] tracking-[-0.01em]">
@@ -90,7 +155,6 @@ export default function BlogPage() {
           </div>
         </section>
 
-        {/* BLOG CONTENT */}
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-20">
           <h2 className="text-[#2E6418] text-[32px] md:text-[42px] font-bold uppercase">
             BÀI VIẾT MỚI NHẤT
@@ -139,17 +203,12 @@ export default function BlogPage() {
             </div>
           ) : (
             <>
-              {/* FEATURED */}
               {featuredPost && (
                 <div className="mt-10 grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-8 items-start">
                   <div>
                     <div className="rounded-[12px] overflow-hidden">
                       <img
-                        src={
-                          featuredPost.thumbnailUrl ||
-                          featuredPost.imageUrl ||
-                          "https://via.placeholder.com/1200x700?text=No+Image"
-                        }
+                        src={getPostPreviewImage(featuredPost)}
                         alt={featuredPost.title}
                         className="w-full h-[280px] md:h-[360px] object-cover"
                       />
@@ -161,21 +220,19 @@ export default function BlogPage() {
                       {getCategoryName(featuredPost.blogCategoryId)}
                     </p>
 
-                    {featuredPost.createdAt && (
-                      <p className="mt-5 text-[15px] text-black/50">
-                        {new Date(featuredPost.createdAt).toLocaleDateString(
-                          "vi-VN",
-                        )}
-                      </p>
-                    )}
+                    <p className="mt-5 text-[15px] text-black/50">
+                      {formatDate(
+                        featuredPost.publishedAt || featuredPost.createdAt,
+                      )}
+                    </p>
 
                     <h3 className="mt-3 text-[28px] md:text-[34px] font-bold leading-tight">
                       {featuredPost.title}
                     </h3>
 
-                    {featuredPost.description && (
+                    {(featuredPost.excerpt || featuredPost.description) && (
                       <p className="mt-5 text-[16px] md:text-[17px] leading-8 text-black/70">
-                        {featuredPost.description}
+                        {featuredPost.excerpt || featuredPost.description}
                       </p>
                     )}
 
@@ -189,28 +246,21 @@ export default function BlogPage() {
                 </div>
               )}
 
-              {/* GRID POSTS */}
               <div className="mt-14 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                 {latestPosts.map((post) => (
                   <article key={post.postId}>
                     <div className="rounded-[10px] overflow-hidden">
                       <img
-                        src={
-                          post.thumbnailUrl ||
-                          post.imageUrl ||
-                          "https://via.placeholder.com/1200x700?text=No+Image"
-                        }
+                        src={getPostPreviewImage(post)}
                         alt={post.title}
                         className="w-full h-[220px] md:h-[240px] object-cover"
                       />
                     </div>
 
                     <div className="mt-4">
-                      {post.createdAt && (
-                        <p className="text-[14px] text-black/45">
-                          {new Date(post.createdAt).toLocaleDateString("vi-VN")}
-                        </p>
-                      )}
+                      <p className="text-[14px] text-black/45">
+                        {formatDate(post.publishedAt || post.createdAt)}
+                      </p>
 
                       <h3 className="mt-2 text-[22px] font-bold leading-8">
                         {post.title}
