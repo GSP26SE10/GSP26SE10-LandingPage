@@ -77,12 +77,8 @@ export default function Footer() {
             </p>
 
             <div className="flex justify-center md:justify-end items-center gap-3 text-center">
-              <a href="/privacy" className="hover:opacity-80 transition">
-                Chính sách bảo mật
-              </a>
-              <span>|</span>
-              <a href="/terms" className="hover:opacity-80 transition">
-                Điều khoản sử dụng
+              <a href="/policy" className="hover:opacity-80 transition">
+                Điều khoản đặt tiệc
               </a>
             </div>
           </div>

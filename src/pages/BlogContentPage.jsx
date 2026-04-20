@@ -4,6 +4,128 @@ import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import API_URL from "@/config/api";
 
+function normalizePostStatus(status) {
+  const raw = String(status ?? "").trim();
+  const lowered = raw.toLowerCase();
+
+  if (lowered === "published" || raw === "1") return "Published";
+  if (lowered === "archived" || raw === "2") return "Archived";
+  return "Draft";
+}
+
+function isPublishedPost(post) {
+  return normalizePostStatus(post?.status) === "Published";
+}
+
+function normalizeImageUrls(input) {
+  if (Array.isArray(input)) return input.filter(Boolean);
+
+  if (typeof input === "string" && input.trim()) {
+    if (input.startsWith("[")) {
+      try {
+        const parsed = JSON.parse(input);
+        return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+      } catch {
+        return [input];
+      }
+    }
+    return [input];
+  }
+
+  return [];
+}
+
+function normalizeImageUrl(url) {
+  if (!url) return "https://via.placeholder.com/1200x700?text=No+Image";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${API_URL}${url}`;
+}
+
+function formatDate(dateString) {
+  if (!dateString) return "--/--/----";
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return "--/--/----";
+  return date.toLocaleDateString("vi-VN");
+}
+
+function getCategoryName(categories, blogCategoryId) {
+  const found = categories.find(
+    (cat) => String(cat.blogCategoryId) === String(blogCategoryId),
+  );
+  return found?.name || "Chưa phân loại";
+}
+
+function getPostCoverImages(post) {
+  return normalizeImageUrls(
+    post?.coverImageFiles ||
+      post?.coverImages ||
+      post?.coverImage ||
+      post?.imgUrl ||
+      post?.imageUrls ||
+      post?.thumbnailUrl ||
+      post?.imageUrl ||
+      post?.coverImageUrl,
+  ).map(normalizeImageUrl);
+}
+
+function getPostPreviewImage(post) {
+  const covers = getPostCoverImages(post);
+  return covers[0] || "https://via.placeholder.com/1200x700?text=No+Image";
+}
+
+function renderBlock(block) {
+  const type = Number(block?.type);
+  const value = String(block?.data || "").trim();
+
+  if (!value) return null;
+
+  if (type === 1) {
+    return (
+      <h2 className="text-[#2F3A67] text-[28px] md:text-[36px] font-bold leading-[1.2]">
+        {value}
+      </h2>
+    );
+  }
+
+  if (type === 2) {
+    return (
+      <h3 className="text-[#2F3A67] text-[22px] md:text-[28px] font-semibold leading-[1.3]">
+        {value}
+      </h3>
+    );
+  }
+
+  if (type === 3) {
+    return (
+      <p className="whitespace-pre-line text-[15px] md:text-[17px] leading-8 text-[#374151]">
+        {value}
+      </p>
+    );
+  }
+
+  if (type === 4) {
+    return (
+      <div className="overflow-hidden rounded-[24px] border border-[#ECE7DF] bg-[#FAFBFD]">
+        <img
+          src={normalizeImageUrl(value)}
+          alt="blog content"
+          className="w-full max-h-[520px] object-cover"
+        />
+      </div>
+    );
+  }
+
+  if (type === 5) {
+    return (
+      <blockquote className="rounded-[24px] border-l-4 border-[#E8712E] bg-[#FFF8F2] px-5 py-4 md:px-6 md:py-5 text-[17px] md:text-[20px] italic leading-8 text-[#5B6780]">
+        “{value}”
+      </blockquote>
+    );
+  }
+
+  return null;
+}
+
 export default function BlogContentPage() {
   const { slug } = useParams();
 
@@ -21,10 +143,10 @@ export default function BlogContentPage() {
 
       try {
         const [categoryRes, allPostRes] = await Promise.all([
-          fetch(`${API_URL}/api/blog-category`, {
+          fetch(`${API_URL}/api/blog-category?page=1&pageSize=200`, {
             headers: { accept: "*/*" },
           }),
-          fetch(`${API_URL}/api/post`, {
+          fetch(`${API_URL}/api/post?page=1&pageSize=200`, {
             headers: { accept: "*/*" },
           }),
         ]);
@@ -41,25 +163,20 @@ export default function BlogContentPage() {
           : [];
 
         const allPosts = Array.isArray(allPostData?.items)
-          ? allPostData.items
+          ? allPostData.items.filter(isPublishedPost)
           : [];
 
         setCategories(categoryItems);
 
-        let currentPost = null;
-
-        // 1) Tìm theo slug từ danh sách posts trước
-        currentPost =
+        let currentPost =
           allPosts.find((item) => String(item.slug) === String(slug)) || null;
 
-        // 2) Nếu không có thì thử coi slug thực ra là postId
         if (!currentPost) {
           currentPost =
             allPosts.find((item) => String(item.postId) === String(slug)) ||
             null;
         }
 
-        // 3) Nếu vẫn chưa có thì gọi API theo query param Swagger
         if (!currentPost) {
           const isNumericId = /^\d+$/.test(String(slug));
 
@@ -88,17 +205,20 @@ export default function BlogContentPage() {
           }
         }
 
-        if (!currentPost || !currentPost.postId) {
+        if (
+          !currentPost ||
+          !currentPost.postId ||
+          !isPublishedPost(currentPost)
+        ) {
           throw new Error("Không tìm thấy bài viết");
         }
 
         setPost(currentPost);
 
-        // Lấy blocks theo đúng swagger: GET /api/post-block?PostId=...
         const blockRes = await fetch(
           `${API_URL}/api/post-block?PostId=${encodeURIComponent(
             currentPost.postId,
-          )}`,
+          )}&page=1&pageSize=200`,
           {
             headers: { accept: "*/*" },
           },
@@ -119,10 +239,9 @@ export default function BlogContentPage() {
           blockItems = blockData.data;
         }
 
-        const sortedBlocks = [...blockItems].sort((a, b) => {
-          return Number(a.position || 0) - Number(b.position || 0);
-        });
-
+        const sortedBlocks = [...blockItems].sort(
+          (a, b) => Number(a.position || 0) - Number(b.position || 0),
+        );
         setPostBlocks(sortedBlocks);
 
         const related = allPosts
@@ -146,96 +265,21 @@ export default function BlogContentPage() {
     fetchBlogContent();
   }, [slug]);
 
-  const getCategoryName = (blogCategoryId) => {
-    const found = categories.find(
-      (cat) => String(cat.blogCategoryId) === String(blogCategoryId),
-    );
-    return found?.name || "Chưa phân loại";
-  };
+  const categoryName = post
+    ? getCategoryName(categories, post.blogCategoryId)
+    : "Chưa phân loại";
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "--/--/----";
-    const date = new Date(dateString);
-    if (Number.isNaN(date.getTime())) return "--/--/----";
-    return date.toLocaleDateString("vi-VN");
-  };
-
-  const normalizeImageUrl = (url) => {
-    if (!url) {
-      return "https://via.placeholder.com/1200x700?text=No+Image";
-    }
-
-    if (url.startsWith("http://") || url.startsWith("https://")) {
-      return url;
-    }
-
-    return `${API_URL}${url}`;
-  };
-
-  const getPostPreviewImage = (item) => {
-    return (
-      item?.thumbnailUrl ||
-      item?.imageUrl ||
-      item?.coverImageUrl ||
-      "https://via.placeholder.com/1200x700?text=No+Image"
-    );
-  };
-
-  const renderBlock = (block) => {
-    const type = Number(block?.type);
-    const value = block?.data || "";
-
-    if (type === 1) {
-      return (
-        <h2 className="text-[#2E6418] text-[34px] md:text-[56px] font-bold leading-[1.15] tracking-[-0.02em]">
-          {value}
-        </h2>
-      );
-    }
-
-    if (type === 2) {
-      return (
-        <h3 className="text-[22px] md:text-[26px] font-bold leading-[1.35] text-black">
-          {value}
-        </h3>
-      );
-    }
-
-    if (type === 3) {
-      return (
-        <p className="text-[17px] md:text-[18px] leading-8 text-black/75 whitespace-pre-line">
-          {value}
-        </p>
-      );
-    }
-
-    if (type === 4) {
-      return (
-        <div className="rounded-[12px] overflow-hidden">
-          <img
-            src={normalizeImageUrl(value)}
-            alt="blog content"
-            className="w-full h-[220px] md:h-[320px] object-cover"
-          />
-        </div>
-      );
-    }
-
-    return null;
-  };
-
-  const imageBlocks = postBlocks.filter((block) => Number(block.type) === 4);
-  const textBlocks = postBlocks.filter((block) => Number(block.type) !== 4);
+  const coverImages = post ? getPostCoverImages(post) : [];
 
   return (
     <div
-      className="min-h-screen bg-[#FFFAF0] text-[#1f1f1f]"
+      className="min-h-screen bg-[#FFF8F2] text-[#1f1f1f]"
       style={{ fontFamily: "Montserrat, sans-serif" }}
     >
       <NavBar />
 
       <main>
-        <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pt-8 pb-20">
+        <section className="max-w-[1440px] mx-auto px-5 md:px-7 lg:px-10 pt-8 md:pt-10 pb-20">
           {loading ? (
             <div className="py-16 text-center text-lg text-black/60">
               Đang tải nội dung bài viết...
@@ -250,89 +294,125 @@ export default function BlogContentPage() {
             </div>
           ) : (
             <>
-              {/* HERO */}
-              <section className="rounded-[10px] bg-[#2E6418] px-6 py-12 md:px-10 md:py-14 text-center text-[#FFFAF0]">
-                <h1 className="text-[30px] md:text-[44px] font-bold uppercase leading-[1.2] tracking-[-0.01em]">
-                  KHÁM PHÁ KINH NGHIỆM TỔ CHỨC TIỆC
-                  <br />
-                  TRONG MỖI BÀI VIẾT
-                </h1>
+              <section className="rounded-[32px] bg-white border border-[#ECE7DF] shadow-sm overflow-hidden">
+                <div className="px-6 py-8 md:px-10 md:py-10 border-b border-[#F1E7DA]">
+                  <div className="flex flex-wrap items-center gap-3 text-sm">
+                    <span className="inline-flex rounded-full bg-[#EEF2FF] px-3 py-1 font-semibold text-[#2F3A67]">
+                      Đã xuất bản
+                    </span>
 
-                <p className="mt-7 max-w-[760px] mx-auto text-[15px] md:text-[16px] leading-7 text-white/90">
-                  Cùng BOOKFET tìm hiểu các mẹo tổ chức tiệc buffet hiệu quả,
-                  lựa chọn menu phù hợp và tối ưu trải nghiệm sự kiện cho mọi
-                  quy mô tiệc.
-                </p>
-              </section>
+                    <span className="inline-flex rounded-full bg-[#FFF3E8] px-3 py-1 font-semibold text-[#E8712E]">
+                      {categoryName}
+                    </span>
+                  </div>
 
-              {/* TITLE + EXCERPT */}
-              <section className="mt-14">
-                <h2 className="text-[#2E6418] text-[34px] md:text-[56px] font-bold leading-[1.15] tracking-[-0.02em]">
-                  {post.title}
-                </h2>
+                  <h1 className="mt-5 text-[#2E6418] text-[30px] md:text-[46px] lg:text-[56px] font-bold leading-[1.12] tracking-[-0.02em]">
+                    {post.title}
+                  </h1>
 
-                {post.excerpt && (
-                  <p className="mt-5 max-w-[1120px] text-[17px] md:text-[18px] leading-8 text-black/75">
-                    {post.excerpt}
-                  </p>
+                  {post.excerpt && (
+                    <p className="mt-5 max-w-[980px] text-[16px] md:text-[18px] leading-8 text-[#5B6780]">
+                      {post.excerpt}
+                    </p>
+                  )}
+                </div>
+
+                {coverImages.length > 0 && (
+                  <div className="px-6 py-6 md:px-10 md:py-8">
+                    {coverImages.length === 1 ? (
+                      <div className="overflow-hidden rounded-[28px] border border-[#ECE7DF] bg-[#FAFBFD]">
+                        <img
+                          src={coverImages[0]}
+                          alt={post.title}
+                          className="w-full h-[260px] md:h-[420px] object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {coverImages.slice(0, 2).map((src, index) => (
+                          <div
+                            key={`${src}-${index}`}
+                            className="overflow-hidden rounded-[28px] border border-[#ECE7DF] bg-[#FAFBFD]"
+                          >
+                            <img
+                              src={src}
+                              alt={`${post.title}-${index + 1}`}
+                              className="w-full h-[240px] md:h-[360px] object-cover"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 )}
               </section>
 
-              {/* TOP IMAGES */}
-              {imageBlocks.length > 0 && (
-                <section className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {imageBlocks.slice(0, 2).map((block) => (
-                    <div key={block.postBlockId || block.id}>
-                      {renderBlock(block)}
-                    </div>
-                  ))}
-                </section>
-              )}
+              <section className="mt-10 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-8 items-start">
+                <article className="rounded-[32px] bg-white border border-[#ECE7DF] shadow-sm px-6 py-7 md:px-10 md:py-10">
+                  <div className="space-y-6 md:space-y-7">
+                    {postBlocks.length > 0 ? (
+                      postBlocks.map((block) => (
+                        <div
+                          key={block.postBlockId || block.id || block.position}
+                        >
+                          {renderBlock(block)}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="rounded-2xl border border-dashed border-[#D6DFEF] bg-[#FAFBFD] px-5 py-10 text-center text-sm text-[#8DA1C1]">
+                        Bài viết chưa có nội dung chi tiết.
+                      </div>
+                    )}
+                  </div>
+                </article>
 
-              {/* CONTENT + META */}
-              <section className="mt-12 grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-10 items-start">
-                <div className="space-y-7">
-                  {textBlocks.map((block) => (
-                    <div key={block.postBlockId || block.id}>
-                      {renderBlock(block)}
-                    </div>
-                  ))}
-                </div>
-
-                <aside className="rounded-[12px] bg-[#DCE8CB] px-6 py-6">
-                  <h3 className="text-[18px] font-medium uppercase text-black/80">
-                    CHI TIẾT
+                <aside className="xl:sticky xl:top-24 rounded-[28px] bg-[#DCE8CB] px-6 py-6">
+                  <h3 className="text-[18px] font-semibold uppercase tracking-[0.04em] text-[#2F3A67]">
+                    Chi tiết bài viết
                   </h3>
 
-                  <div className="mt-3 h-px bg-black/20" />
+                  <div className="mt-4 h-px bg-black/15" />
 
-                  <div className="mt-5 grid grid-cols-[120px_1fr] gap-y-5 text-[16px]">
-                    <div className="uppercase text-black/35">Ngày đăng</div>
-                    <div className="text-right text-black/80">
-                      {formatDate(post.publishedAt || post.createdAt)}
+                  <div className="mt-5 space-y-5 text-[15px] md:text-[16px]">
+                    <div className="grid grid-cols-[110px_1fr] gap-3">
+                      <div className="uppercase text-black/40">Ngày đăng</div>
+                      <div className="text-right text-black/80 font-medium">
+                        {formatDate(post.publishedAt || post.createdAt)}
+                      </div>
                     </div>
 
-                    <div className="uppercase text-black/35">Chuyên mục</div>
-                    <div className="text-right text-black/80">
-                      {getCategoryName(post.blogCategoryId)}
+                    <div className="grid grid-cols-[110px_1fr] gap-3">
+                      <div className="uppercase text-black/40">Chuyên mục</div>
+                      <div className="text-right text-black/80 font-medium">
+                        {categoryName}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-[110px_1fr] gap-3">
+                      <div className="uppercase text-black/40">Mã bài viết</div>
+                      <div className="text-right text-black/80 font-medium">
+                        #{post.postId}
+                      </div>
                     </div>
                   </div>
                 </aside>
               </section>
 
-              {/* RELATED POSTS */}
               {relatedPosts.length > 0 && (
-                <section className="mt-24">
-                  <h3 className="text-center text-[#E85E1B] text-[34px] md:text-[52px] font-bold uppercase">
+                <section className="mt-20 md:mt-24">
+                  <h3 className="text-center text-[#E85E1B] text-[30px] md:text-[46px] font-bold uppercase leading-[1.15]">
                     Có thể bạn quan tâm
                   </h3>
 
-                  <div className="mt-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                  <div className="mt-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
                     {relatedPosts.map((item) => (
-                      <article key={item.postId}>
-                        <div className="rounded-[10px] overflow-hidden">
+                      <article
+                        key={item.postId}
+                        className="rounded-[28px] bg-white border border-[#ECE7DF] p-4 md:p-5 shadow-sm"
+                      >
+                        <div className="overflow-hidden rounded-[22px]">
                           <img
-                            src={normalizeImageUrl(getPostPreviewImage(item))}
+                            src={getPostPreviewImage(item)}
                             alt={item.title}
                             className="w-full h-[220px] object-cover"
                           />
@@ -340,16 +420,22 @@ export default function BlogContentPage() {
 
                         <div className="mt-4">
                           <p className="text-[14px] text-black/45">
-                            {formatDate(item.createdAt)}
+                            {formatDate(item.publishedAt || item.createdAt)}
                           </p>
 
-                          <h4 className="mt-2 text-[22px] font-bold leading-8">
+                          <h4 className="mt-2 text-[22px] font-bold leading-8 text-[#2F3A67] line-clamp-2">
                             {item.title}
                           </h4>
 
+                          {item.excerpt && (
+                            <p className="mt-3 text-[15px] leading-7 text-[#5B6780] line-clamp-3">
+                              {item.excerpt}
+                            </p>
+                          )}
+
                           <Link
                             to={`/blog/${item.slug || item.postId}`}
-                            className="mt-4 inline-block text-[#E85E1B] text-[18px] font-semibold underline"
+                            className="mt-4 inline-block text-[#E85E1B] text-[17px] font-semibold underline"
                           >
                             Xem thêm
                           </Link>

@@ -38,7 +38,7 @@ export default function NavBar() {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-4">
-            <button
+            {/* <button
               className="text-[#2f2f2f] hover:text-[#2f7d32] transition"
               aria-label="Search"
             >
@@ -64,7 +64,7 @@ export default function NavBar() {
               className="ml-2 inline-flex items-center rounded-full border border-[#2f2f2f] px-4 py-2 text-[12px] font-semibold text-[#2f2f2f] hover:bg-[#2f7d32] hover:text-white hover:border-[#2f7d32] transition"
             >
               ĐẶT TIỆC NGAY
-            </a>
+            </a> */}
           </div>
 
           {/* Mobile Button */}
@@ -77,7 +77,7 @@ export default function NavBar() {
           </button>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu  */}
         {open && (
           <div className="lg:hidden pb-4">
             <div className="flex flex-col gap-3 border-t border-[#e7decf] pt-4">
@@ -111,13 +111,6 @@ export default function NavBar() {
                   <User size={18} />
                 </button>
               </div>
-
-              <a
-                href="/booking"
-                className="mt-2 inline-flex w-fit items-center rounded-full border border-[#2f2f2f] px-4 py-2 text-[12px] font-semibold text-[#2f2f2f] hover:bg-[#2f7d32] hover:text-white hover:border-[#2f7d32] transition"
-              >
-                ĐẶT TIỆC NGAY
-              </a>
             </div>
           </div>
         )}
