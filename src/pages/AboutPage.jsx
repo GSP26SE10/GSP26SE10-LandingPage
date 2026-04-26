@@ -188,75 +188,6 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* TEAM */}
-        <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-14">
-          <br />
-          <br />
-          <h2 className="text-[#E85E1B] text-[34px] md:text-[48px] font-bold uppercase leading-none">
-            ĐỘI NGŨ ĐỨNG SAU BOOKFET
-          </h2>
-
-          {/* top row */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-5 max-w-[980px]">
-            <div className="rounded-[8px] bg-[#DCE8CC] overflow-hidden">
-              <img
-                src={teamMembers[0].image}
-                alt={teamMembers[0].name}
-                className="w-full h-[260px] md:h-[300px] object-cover"
-              />
-            </div>
-
-            <div className="rounded-[8px] bg-[#DCE8CC] overflow-hidden">
-              <img
-                src={teamMembers[1].image}
-                alt={teamMembers[1].name}
-                className="w-full h-[260px] md:h-[300px] object-cover"
-              />
-            </div>
-
-            <div className="rounded-[8px] bg-[#2E6418] text-[#DCE8CC] p-6 md:p-7 min-h-[260px] md:min-h-[300px] flex flex-col justify-between">
-              <div className="text-[46px] leading-none font-bold">“</div>
-
-              <p className="text-[16px] md:text-[17px] leading-8 text-[#DCE8CC] -mt-6">
-                Chúng tôi là sự kết hợp giữa những người yêu công nghệ, quản lý
-                dịch vụ và tổ chức sự kiện, cùng chung mục tiêu nâng cao trải
-                nghiệm đặt tiệc buffet.
-              </p>
-
-              <div className="text-[46px] leading-none font-bold self-end">
-                ”
-              </div>
-            </div>
-          </div>
-
-          {/* bottom row */}
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-5 max-w-[980px] ml-0 md:ml-[185px]">
-            <div className="rounded-[8px] bg-[#DCE8CC] overflow-hidden">
-              <img
-                src={teamMembers[2].image}
-                alt={teamMembers[2].name}
-                className="w-full h-[260px] md:h-[300px] object-cover"
-              />
-            </div>
-
-            <div className="rounded-[8px] bg-[#DCE8CC] overflow-hidden">
-              <img
-                src={teamMembers[3].image}
-                alt={teamMembers[3].name}
-                className="w-full h-[260px] md:h-[300px] object-cover"
-              />
-            </div>
-
-            <div className="rounded-[8px] bg-[#DCE8CC] overflow-hidden">
-              <img
-                src={teamMembers[4].image}
-                alt={teamMembers[4].name}
-                className="w-full h-[260px] md:h-[300px] object-cover"
-              />
-            </div>
-          </div>
-        </section>
-
         {/* QUOTE */}
         <section className="w-full pb-14">
           <div
@@ -375,7 +306,7 @@ export default function AboutPage() {
 
                 <div className="mt-6 flex flex-col gap-4 border-t border-black/15 pt-5 transition group-hover:border-white/20 md:flex-row md:items-center md:justify-between">
                   <p className="text-[24px] md:text-[26px] font-bold">
-                    Từ 4.000.000 VNĐ
+                    Từ 5.000.000 VNĐ
                     <span className="text-[16px] font-normal text-black/70 transition group-hover:text-white/80">
                       {" "}
                       / buổi tiệc

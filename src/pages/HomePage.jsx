@@ -36,35 +36,54 @@ export default function HomePage() {
     },
   ];
 
-  const services = [
-    {
-      id: 1,
-      title: "Tiệc Buffet Hải Sản",
-      desc: "Các loại hải sản như tôm, cua, hàu... phù hợp tiệc sang trọng và tiếp khách.",
-      image:
-        "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop",
-      rating: "4.9/5",
-      orders: "120+ lượt đặt",
-    },
-    {
-      id: 2,
-      title: "Tiệc Buffet Bò",
-      desc: "Phù hợp tiệc tại nhà, sinh nhật và các dịp họp mặt thân mật với thực đơn đậm vị.",
-      image:
-        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1200&auto=format&fit=crop",
-      rating: "4.9/5",
-      orders: "120+ lượt đặt",
-    },
-    {
-      id: 3,
-      title: "Tiệc Buffet Chay",
-      desc: "Thực đơn thanh đạm, đẹp mắt và phù hợp với nhiều đối tượng khách mời khác nhau.",
-      image:
-        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1200&auto=format&fit=crop",
-      rating: "4.8/5",
-      orders: "95+ lượt đặt",
-    },
-  ];
+  const [services, setServices] = React.useState([]);
+  const [servicesLoading, setServicesLoading] = React.useState(true);
+  const [servicesError, setServicesError] = React.useState("");
+
+  React.useEffect(() => {
+    const fetchFavoriteServices = async () => {
+      setServicesLoading(true);
+      setServicesError("");
+
+      try {
+        const res = await fetch(
+          "https://bookfet.nport.link/api/service?page=1&pageSize=10",
+          {
+            headers: { accept: "*/*" },
+          },
+        );
+
+        if (!res.ok) {
+          throw new Error("Không thể tải dịch vụ yêu thích");
+        }
+
+        const data = await res.json();
+        const items = data?.items || [];
+
+        const favoriteServices = items
+          .filter((item) => item.status === 1)
+          .sort((a, b) => {
+            const ratingA = a.averageRating ?? 0;
+            const ratingB = b.averageRating ?? 0;
+            const reviewA = a.totalReviews ?? 0;
+            const reviewB = b.totalReviews ?? 0;
+
+            if (ratingB !== ratingA) return ratingB - ratingA;
+            return reviewB - reviewA;
+          })
+          .slice(0, 3);
+
+        setServices(favoriteServices);
+      } catch (error) {
+        console.error(error);
+        setServicesError("Không thể tải dịch vụ được yêu thích.");
+      } finally {
+        setServicesLoading(false);
+      }
+    };
+
+    fetchFavoriteServices();
+  }, []);
 
   const [packages, setPackages] = React.useState([]);
   const [packagesLoading, setPackagesLoading] = React.useState(true);
@@ -76,29 +95,40 @@ export default function HomePage() {
 
   const pageSize = 4;
 
-  const blogs = [
-    {
-      id: 1,
-      title: "5 Bí Quyết Tổ Chức Tiệc Buffet Tại Nhà Hoàn Hảo",
-      date: "Tháng 1, 2026",
-      image:
-        "https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      id: 2,
-      title: "Cách Chọn Menu Phù Hợp Cho Tiệc Công Ty",
-      date: "Tháng 1, 2026",
-      image:
-        "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      id: 3,
-      title: "Xu Hướng Dịch Vụ Buffet Năm 2026",
-      date: "Tháng 1, 2026",
-      image:
-        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1200&auto=format&fit=crop",
-    },
-  ];
+  const [blogs, setBlogs] = React.useState([]);
+  const [blogsLoading, setBlogsLoading] = React.useState(true);
+  const [blogsError, setBlogsError] = React.useState("");
+
+  React.useEffect(() => {
+    const fetchHomeBlogs = async () => {
+      setBlogsLoading(true);
+      setBlogsError("");
+
+      try {
+        const res = await fetch(`${API_URL}/api/post?page=1&pageSize=3`, {
+          headers: { accept: "*/*" },
+        });
+
+        if (!res.ok) {
+          throw new Error("Không thể tải bài viết");
+        }
+
+        const data = await res.json();
+        const postItems = Array.isArray(data?.items) ? data.items : [];
+
+        const publishedPosts = postItems.filter(isPublishedPost).slice(0, 3);
+
+        setBlogs(publishedPosts);
+      } catch (error) {
+        console.error(error);
+        setBlogsError("Không thể tải danh sách bài viết.");
+      } finally {
+        setBlogsLoading(false);
+      }
+    };
+
+    fetchHomeBlogs();
+  }, []);
   const [openFaq, setOpenFaq] = React.useState("01");
   const faqs = [
     {
@@ -393,7 +423,7 @@ export default function HomePage() {
                 </div>
 
                 <a
-                  href="/booking"
+                  href="/contact"
                   className="inline-flex h-[52px] shrink-0 items-center justify-center rounded-full bg-[#E8712E] px-8 text-[16px] font-medium text-[#262626] transition hover:opacity-90"
                 >
                   Đặt ngay
@@ -406,163 +436,74 @@ export default function HomePage() {
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-16">
           <br />
           <br />
+
           <div className="flex items-center justify-between gap-4 mb-8">
             <h2 className="text-[#DE5000] text-4xl md:text-5xl font-bold">
               DỊCH VỤ ĐƯỢC KHÁCH HÀNG YÊU THÍCH
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {services.map((item) => (
-              <div key={item.id} className="rounded-[12px] bg-[#E8712E]/50 p-4">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-[260px] object-cover rounded-[8px]"
-                />
-                <div className="bg-white mt-4 rounded-[8px] p-4">
-                  <h3 className="text-[18px] font-bold text-[#DE5000]">
-                    {item.title}
-                  </h3>
-                  <p className="mt-3 text-[15px] leading-6 text-black/60">
-                    {item.desc}
-                  </p>
-                  <p className="mt-4 text-[15px] text-black/60">
-                    {item.orders}
-                  </p>
-                  <div className="mt-2 flex items-center gap-2 text-[15px] text-black/60">
-                    <Star size={16} fill="#FFC00B" color="#FFC00B" />
-                    {item.rating}
+          {servicesLoading ? (
+            <div className="py-10 text-center text-lg text-black/60">
+              Đang tải dịch vụ...
+            </div>
+          ) : servicesError ? (
+            <div className="py-10 text-center text-lg text-red-500">
+              {servicesError}
+            </div>
+          ) : services.length === 0 ? (
+            <div className="py-10 text-center text-lg text-black/60">
+              Chưa có dịch vụ phù hợp.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {services.map((item) => (
+                <div
+                  key={item.serviceId}
+                  className="rounded-[12px] bg-[#E8712E]/50 p-4"
+                >
+                  <img
+                    src={item.img}
+                    alt={item.serviceName}
+                    className="w-full h-[260px] object-cover rounded-[8px]"
+                  />
+
+                  <div className="bg-white mt-4 rounded-[8px] p-4">
+                    <h3 className="text-[18px] font-bold text-[#DE5000]">
+                      {item.serviceName}
+                    </h3>
+
+                    <p className="mt-3 text-[15px] leading-6 text-black/60">
+                      {item.description}
+                    </p>
+
+                    <p className="mt-4 text-[15px] font-semibold text-[#2E6418]">
+                      {Number(item.basePrice).toLocaleString("vi-VN")} VNĐ
+                    </p>
+
+                    <p className="mt-4 text-[15px] text-black/60">
+                      {item.totalReviews ?? 0} lượt đánh giá
+                    </p>
+
+                    <div className="mt-2 flex items-center gap-2 text-[15px] text-black/60">
+                      <Star size={16} fill="#FFC00B" color="#FFC00B" />
+                      {item.averageRating
+                        ? `${item.averageRating}/5`
+                        : "Chưa có đánh giá"}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* ESTIMATE TOOL */}
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-16">
           <br />
           <br />
-          <div className="rounded-[24px] bg-[#2E6418] p-6 md:p-10">
-            <h2 className="text-center text-white text-3xl md:text-5xl font-bold">
-              HIỂU RÕ NHU CẦU BỮA TIỆC CỦA BẠN
-            </h2>
 
-            <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="bg-white rounded-[20px] p-6 md:p-8">
-                <h3 className="text-2xl md:text-3xl font-semibold text-black">
-                  Công Cụ Ước Tính Đặt Tiệc
-                </h3>
-                <p className="mt-3 text-black/60 leading-7">
-                  Sử dụng công cụ đặt tiệc thông minh để xác định số lượng
-                  khách, loại tiệc và gợi ý menu phù hợp cho sự kiện của bạn.
-                </p>
-
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-sm mb-2">Số lượng khách</label>
-                    <input
-                      defaultValue="10"
-                      className="w-full rounded-md border border-black/25 px-4 py-3 outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm mb-2">Loại sự kiện</label>
-                    <input
-                      defaultValue="Sinh nhật"
-                      className="w-full rounded-md border border-black/25 px-4 py-3 outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm mb-2">
-                      Ngân sách dự kiến (VNĐ)
-                    </label>
-                    <input
-                      defaultValue="2.500.000"
-                      className="w-full rounded-md border border-black/25 px-4 py-3 outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm mb-2">
-                      Thời gian tổ chức
-                    </label>
-                    <input
-                      defaultValue="01/01/2026"
-                      className="w-full rounded-md border border-black/25 px-4 py-3 outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-8">
-                  <p className="text-black/50">Menu đề xuất</p>
-                  <p className="mt-1 font-medium text-[#45B733]">
-                    Gói Buffet Gia đình tiêu chuẩn
-                  </p>
-                  <ul className="mt-4 space-y-2 text-[#DE5000] font-medium">
-                    <li>Món ăn khai vị</li>
-                    <li>Món ăn 1</li>
-                    <li>Món ăn 2</li>
-                    <li>Món ăn 3</li>
-                    <li>Tráng miệng</li>
-                  </ul>
-
-                  <p className="mt-8 text-black/50">Giá ước tính</p>
-                  <p className="mt-1 font-medium text-[#45B733]">
-                    2.500.000 VNĐ
-                  </p>
-
-                  <div className="mt-6 flex flex-wrap gap-4">
-                    <button className="rounded-full bg-[#E8712E] px-6 py-3 text-white font-medium">
-                      Gợi ý Menu
-                    </button>
-                    <button className="rounded-full bg-[#2E6418] px-6 py-3 text-white font-medium">
-                      Đặt ngay
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-white">
-                <h3 className="text-2xl md:text-3xl font-semibold">
-                  Bảng Gợi Ý Quy Mô Tiệc
-                </h3>
-
-                <div className="mt-6 overflow-hidden rounded-[16px] border border-white/30">
-                  <div className="grid grid-cols-2 bg-white/10 font-medium">
-                    <div className="px-5 py-4 border-r border-white/30">
-                      Số lượng khách
-                    </div>
-                    <div className="px-5 py-4">Gợi ý</div>
-                  </div>
-
-                  {[
-                    ["Dưới 20", "Tiệc gia đình"],
-                    ["20 - 50", "Tiệc công ty nhỏ"],
-                    ["50 - 100", "Tiệc quy mô vừa"],
-                    ["Trên 100", "Tiệc quy mô lớn"],
-                  ].map((row, index) => (
-                    <div
-                      key={index}
-                      className="grid grid-cols-2 border-t border-white/30"
-                    >
-                      <div className="px-5 py-5 border-r border-white/30">
-                        {row[0]}
-                      </div>
-                      <div className="px-5 py-5">{row[1]}</div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-8 flex justify-end">
-                  <ShieldCheck size={100} className="text-[#96C782]" />
-                </div>
-              </div>
-            </div>
-          </div>
+          <EstimateTool />
         </section>
 
         {/* PACKAGES */}
@@ -757,10 +698,12 @@ export default function HomePage() {
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-16">
           <br />
           <br />
+
           <div className="flex items-center justify-between gap-4 mb-8">
             <h2 className="text-[#2E6418] text-4xl md:text-5xl font-bold">
               BLOG – KINH NGHIỆM TỔ CHỨC TIỆC
             </h2>
+
             <a
               href="/blog"
               className="rounded-full bg-[#E8712E] px-6 py-3 text-white font-bold"
@@ -769,27 +712,46 @@ export default function HomePage() {
             </a>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {blogs.map((item) => (
-              <div key={item.id}>
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-[260px] object-cover rounded-[10px]"
-                />
-                <p className="mt-6 text-[20px] text-black/50">{item.date}</p>
-                <h3 className="mt-3 text-[20px] font-bold leading-8">
-                  {item.title}
-                </h3>
-                <a
-                  href="/blog"
-                  className="mt-4 inline-block text-[20px] font-medium text-[#DE5000] underline"
-                >
-                  Xem thêm
-                </a>
-              </div>
-            ))}
-          </div>
+          {blogsLoading ? (
+            <div className="py-10 text-center text-lg text-black/60">
+              Đang tải bài viết...
+            </div>
+          ) : blogsError ? (
+            <div className="py-10 text-center text-lg text-red-500">
+              {blogsError}
+            </div>
+          ) : blogs.length === 0 ? (
+            <div className="py-10 text-center text-lg text-black/60">
+              Không có bài viết nào.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {blogs.map((item) => (
+                <div key={item.postId}>
+                  <img
+                    src={getPostPreviewImage(item)}
+                    alt={item.title}
+                    className="w-full h-[260px] object-cover rounded-[10px]"
+                  />
+
+                  <p className="mt-6 text-[20px] text-black/50">
+                    {formatDate(item.publishedAt || item.createdAt)}
+                  </p>
+
+                  <h3 className="mt-3 text-[20px] font-bold leading-8">
+                    {item.title}
+                  </h3>
+
+                  <a
+                    href={`/blog/${item.slug || item.postId}`}
+                    className="mt-4 inline-block text-[20px] font-medium text-[#DE5000] underline"
+                  >
+                    Xem thêm
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* FAQ */}
@@ -867,4 +829,336 @@ export default function HomePage() {
       <Footer />
     </div>
   );
+}
+function EstimateTool() {
+  const [form, setForm] = React.useState({
+    numberOfGuests: 10,
+    budget: 2500000,
+    partyCategoryId: 1,
+    eventDate: new Date().toISOString(),
+    favoriteDishes: "",
+    allergyDishes: "",
+  });
+
+  const [suggestedMenu, setSuggestedMenu] = React.useState(null);
+  const [suggestedDishes, setSuggestedDishes] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState("");
+
+  const handleChange = (field, value) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSuggestMenu = async () => {
+    setLoading(true);
+    setError("");
+    setSuggestedMenu(null);
+    setSuggestedDishes([]);
+
+    try {
+      const body = {
+        numberOfGuests: Number(form.numberOfGuests),
+        budget: Number(form.budget),
+        partyCategoryId: Number(form.partyCategoryId),
+        eventDate: new Date(form.eventDate).toISOString(),
+        favoriteDishes: form.favoriteDishes
+          ? form.favoriteDishes.split(",").map((item) => item.trim())
+          : [],
+        allergyDishes: form.allergyDishes
+          ? form.allergyDishes.split(",").map((item) => item.trim())
+          : [],
+      };
+
+      const suggestRes = await fetch(
+        "https://gsp26se10-be.fly.dev/api/menu-suggestion/ai-suggest",
+        {
+          method: "POST",
+          headers: {
+            accept: "*/*",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        },
+      );
+
+      if (!suggestRes.ok) {
+        throw new Error("Không thể gợi ý menu");
+      }
+
+      const suggestData = await suggestRes.json();
+
+      const menuId =
+        suggestData?.menuId ||
+        suggestData?.data?.menuId ||
+        suggestData?.result?.menuId;
+
+      if (!menuId) {
+        throw new Error("API không trả về menuId");
+      }
+
+      const [menuRes, menuDishRes] = await Promise.all([
+        fetch("https://gsp26se10-be.fly.dev/api/menu", {
+          headers: { accept: "*/*" },
+        }),
+        fetch("https://gsp26se10-be.fly.dev/api/menu-dish", {
+          headers: { accept: "*/*" },
+        }),
+      ]);
+
+      if (!menuRes.ok || !menuDishRes.ok) {
+        throw new Error("Không thể tải thông tin menu");
+      }
+
+      const menuData = await menuRes.json();
+      const menuDishData = await menuDishRes.json();
+
+      const menu = (menuData?.items || []).find(
+        (item) => item.menuId === Number(menuId),
+      );
+
+      const dishes = (menuDishData?.items || [])
+        .filter((item) => item.menuId === Number(menuId))
+        .map((item) => item.dishName);
+
+      setSuggestedMenu(menu || null);
+      setSuggestedDishes(dishes);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Có lỗi xảy ra khi gợi ý menu.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="rounded-[24px] bg-[#2E6418] p-6 md:p-10">
+      <h2 className="text-center text-white text-3xl md:text-5xl font-bold">
+        HIỂU RÕ NHU CẦU BỮA TIỆC CỦA BẠN
+      </h2>
+
+      <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-white rounded-[20px] p-6 md:p-8">
+          <h3 className="text-2xl md:text-3xl font-semibold text-black">
+            Công Cụ Ước Tính Đặt Tiệc
+          </h3>
+
+          <p className="mt-3 text-black/60 leading-7">
+            Nhập thông tin bữa tiệc để hệ thống AI gợi ý menu phù hợp nhất.
+          </p>
+
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-sm mb-2">Số lượng khách</label>
+              <input
+                type="number"
+                value={form.numberOfGuests}
+                onChange={(e) => handleChange("numberOfGuests", e.target.value)}
+                className="w-full rounded-md border border-black/25 px-4 py-3 outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-2">Loại sự kiện</label>
+              <select
+                value={form.partyCategoryId}
+                onChange={(e) =>
+                  handleChange("partyCategoryId", e.target.value)
+                }
+                className="w-full rounded-md border border-black/25 px-4 py-3 outline-none"
+              >
+                <option value={1}>Sinh nhật / Gia đình</option>
+                <option value={2}>Tiệc công ty</option>
+                <option value={3}>Sự kiện lớn</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm mb-2">Ngân sách dự kiến</label>
+              <input
+                type="number"
+                value={form.budget}
+                onChange={(e) => handleChange("budget", e.target.value)}
+                className="w-full rounded-md border border-black/25 px-4 py-3 outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-2">Ngày tổ chức</label>
+              <input
+                type="datetime-local"
+                value={form.eventDate.slice(0, 16)}
+                onChange={(e) => handleChange("eventDate", e.target.value)}
+                className="w-full rounded-md border border-black/25 px-4 py-3 outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-2">Món yêu thích</label>
+              <input
+                placeholder="Ví dụ: bò, gà, hải sản"
+                value={form.favoriteDishes}
+                onChange={(e) => handleChange("favoriteDishes", e.target.value)}
+                className="w-full rounded-md border border-black/25 px-4 py-3 outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-2">
+                Món dị ứng / không ăn
+              </label>
+              <input
+                placeholder="Ví dụ: tôm, cua"
+                value={form.allergyDishes}
+                onChange={(e) => handleChange("allergyDishes", e.target.value)}
+                className="w-full rounded-md border border-black/25 px-4 py-3 outline-none"
+              />
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleSuggestMenu}
+            disabled={loading}
+            className="mt-8 rounded-full bg-[#E8712E] px-6 py-3 text-white font-medium disabled:opacity-60"
+          >
+            {loading ? "Đang gợi ý..." : "Gợi ý Menu"}
+          </button>
+
+          {error && <p className="mt-4 text-red-500">{error}</p>}
+
+          {suggestedMenu && (
+            <div className="mt-8 rounded-[16px] bg-[#FFFAF0] p-5 border border-[#DCE8CC]">
+              <p className="text-black/50">Menu đề xuất</p>
+
+              <h4 className="mt-2 text-2xl font-bold text-[#45B733]">
+                {suggestedMenu.menuName}
+              </h4>
+
+              <p className="mt-3 text-[#DE5000] font-semibold">
+                {Number(suggestedMenu.basePrice).toLocaleString("vi-VN")} VNĐ
+              </p>
+
+              <ul className="mt-4 space-y-2 text-[#DE5000] font-medium">
+                {suggestedDishes.length > 0 ? (
+                  suggestedDishes.map((dish, index) => (
+                    <li key={index}>{dish}</li>
+                  ))
+                ) : (
+                  <li>Chưa có thông tin món ăn</li>
+                )}
+              </ul>
+
+              <a
+                href="/booking"
+                className="mt-6 inline-flex rounded-full bg-[#2E6418] px-6 py-3 text-white font-medium"
+              >
+                Đặt ngay
+              </a>
+            </div>
+          )}
+        </div>
+
+        <div className="text-white">
+          <h3 className="text-2xl md:text-3xl font-semibold">
+            Bảng Gợi Ý Quy Mô Tiệc
+          </h3>
+
+          <div className="mt-6 overflow-hidden rounded-[16px] border border-white/30">
+            <div className="grid grid-cols-2 bg-white/10 font-medium">
+              <div className="px-5 py-4 border-r border-white/30">
+                Số lượng khách
+              </div>
+              <div className="px-5 py-4">Gợi ý</div>
+            </div>
+
+            {[
+              ["Dưới 20", "Tiệc gia đình"],
+              ["20 - 50", "Tiệc công ty nhỏ"],
+              ["50 - 100", "Tiệc quy mô vừa"],
+              ["Trên 100", "Tiệc quy mô lớn"],
+            ].map((row, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-2 border-t border-white/30"
+              >
+                <div className="px-5 py-5 border-r border-white/30">
+                  {row[0]}
+                </div>
+                <div className="px-5 py-5">{row[1]}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 flex justify-end">
+            <ShieldCheck size={100} className="text-[#96C782]" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+function normalizePostStatus(status) {
+  const raw = String(status ?? "").trim();
+  const lowered = raw.toLowerCase();
+
+  if (lowered === "published" || raw === "1") return "Published";
+  if (lowered === "archived" || raw === "2") return "Archived";
+  return "Draft";
+}
+
+function isPublishedPost(post) {
+  return normalizePostStatus(post?.status) === "Published";
+}
+
+function normalizeImageUrls(input) {
+  if (Array.isArray(input)) return input.filter(Boolean);
+
+  if (typeof input === "string" && input.trim()) {
+    if (input.startsWith("[")) {
+      try {
+        const parsed = JSON.parse(input);
+        return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+      } catch {
+        return [input];
+      }
+    }
+
+    return [input];
+  }
+
+  return [];
+}
+
+function normalizeImageUrl(url) {
+  if (!url) return "https://via.placeholder.com/1200x700?text=No+Image";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${API_URL}${url}`;
+}
+
+function getPostCoverImages(post) {
+  return normalizeImageUrls(
+    post?.coverImageFiles ||
+      post?.coverImages ||
+      post?.coverImage ||
+      post?.imgUrl ||
+      post?.imageUrls ||
+      post?.thumbnailUrl ||
+      post?.imageUrl ||
+      post?.coverImageUrl,
+  ).map(normalizeImageUrl);
+}
+
+function getPostPreviewImage(post) {
+  const covers = getPostCoverImages(post);
+  return covers[0] || "https://via.placeholder.com/1200x700?text=No+Image";
+}
+
+function formatDate(dateString) {
+  if (!dateString) return "--/--/----";
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return "--/--/----";
+  return date.toLocaleDateString("vi-VN");
 }

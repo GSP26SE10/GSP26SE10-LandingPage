@@ -1,6 +1,7 @@
 import React from "react";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
+import API_URL from "@/config/api";
 
 export default function ContactPage() {
   const faqs = [
@@ -29,7 +30,71 @@ export default function ContactPage() {
         "Có. Bạn có thể điều chỉnh menu trong thời gian phù hợp trước ngày tổ chức, tùy theo tình trạng xác nhận đơn và nguyên liệu.",
     },
   ];
+
   const [openFaq, setOpenFaq] = React.useState("01");
+
+  const [form, setForm] = React.useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    subject: "Tư vấn đặt tiệc",
+    content: "",
+  });
+
+  const [loading, setLoading] = React.useState(false);
+  const [success, setSuccess] = React.useState("");
+  const [error, setError] = React.useState("");
+
+  const handleChange = (field, value) => {
+    setForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccess("");
+    setError("");
+
+    try {
+      const res = await fetch(`${API_URL}/api/contact-request`, {
+        method: "POST",
+        headers: {
+          accept: "*/*",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerId: null,
+          fullName: form.fullName,
+          email: form.email,
+          phone: form.phone,
+          subject: form.subject,
+          content: form.content,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Không thể gửi liên hệ");
+      }
+
+      setSuccess("Gửi liên hệ thành công! Chúng tôi sẽ phản hồi sớm.");
+      setForm({
+        fullName: "",
+        email: "",
+        phone: "",
+        subject: "Tư vấn đặt tiệc",
+        content: "",
+      });
+    } catch (err) {
+      console.error(err);
+      setError("Không thể gửi liên hệ. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div
       className="min-h-screen bg-[#FFFAF0] text-[#1f1f1f]"
@@ -55,7 +120,6 @@ export default function ContactPage() {
         {/* CONTACT FORM + INFO */}
         <section className="max-w-[1440px] mx-auto px-6 lg:px-10 pb-14">
           <div className="grid grid-cols-1 xl:grid-cols-[0.95fr_1.05fr] gap-10 items-start">
-            {/* LEFT FORM */}
             <div className="rounded-[10px] bg-[#DCE8CC] p-8 md:p-10">
               <h2 className="text-[#2E6418] text-[24px] md:text-[32px] font-bold uppercase">
                 GỬI LIÊN HỆ
@@ -66,13 +130,16 @@ export default function ContactPage() {
                 nhất.
               </p>
 
-              <form className="mt-8 space-y-5">
+              <form onSubmit={handleSubmit} className="mt-8 space-y-5">
                 <div>
                   <label className="mb-2 block text-[18px] font-semibold text-black">
                     Họ và tên
                   </label>
                   <input
                     type="text"
+                    required
+                    value={form.fullName}
+                    onChange={(e) => handleChange("fullName", e.target.value)}
                     placeholder="Nhập họ và tên của bạn"
                     className="w-full rounded-[8px] border border-[#9EB08F] bg-transparent px-4 py-3 text-[16px] outline-none placeholder:text-black/35"
                   />
@@ -84,7 +151,24 @@ export default function ContactPage() {
                   </label>
                   <input
                     type="email"
+                    required
+                    value={form.email}
+                    onChange={(e) => handleChange("email", e.target.value)}
                     placeholder="Nhập địa chỉ email"
+                    className="w-full rounded-[8px] border border-[#9EB08F] bg-transparent px-4 py-3 text-[16px] outline-none placeholder:text-black/35"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-[18px] font-semibold text-black">
+                    Số điện thoại
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={form.phone}
+                    onChange={(e) => handleChange("phone", e.target.value)}
+                    placeholder="Nhập số điện thoại"
                     className="w-full rounded-[8px] border border-[#9EB08F] bg-transparent px-4 py-3 text-[16px] outline-none placeholder:text-black/35"
                   />
                 </div>
@@ -93,11 +177,15 @@ export default function ContactPage() {
                   <label className="mb-2 block text-[18px] font-semibold text-black">
                     Chủ đề
                   </label>
-                  <select className="w-full rounded-[8px] border border-[#9EB08F] bg-transparent px-4 py-3 text-[16px] outline-none text-black/70">
-                    <option>Tư vấn đặt tiệc</option>
-                    <option>Tư vấn menu</option>
-                    <option>Hỗ trợ đơn hàng</option>
-                    <option>Khác</option>
+                  <select
+                    value={form.subject}
+                    onChange={(e) => handleChange("subject", e.target.value)}
+                    className="w-full rounded-[8px] border border-[#9EB08F] bg-transparent px-4 py-3 text-[16px] outline-none text-black/70"
+                  >
+                    <option value="Tư vấn đặt tiệc">Tư vấn đặt tiệc</option>
+                    <option value="Tư vấn menu">Tư vấn menu</option>
+                    <option value="Hỗ trợ đơn hàng">Hỗ trợ đơn hàng</option>
+                    <option value="Khác">Khác</option>
                   </select>
                 </div>
 
@@ -107,23 +195,38 @@ export default function ContactPage() {
                   </label>
                   <textarea
                     rows={5}
+                    required
+                    value={form.content}
+                    onChange={(e) => handleChange("content", e.target.value)}
                     placeholder="Nhập nội dung bạn muốn trao đổi..."
                     className="w-full rounded-[8px] border border-[#9EB08F] bg-transparent px-4 py-3 text-[16px] outline-none resize-none placeholder:text-black/35"
                   />
                 </div>
 
+                {success && (
+                  <p className="text-center text-green-700 font-medium">
+                    {success}
+                  </p>
+                )}
+
+                {error && (
+                  <p className="text-center text-red-500 font-medium">
+                    {error}
+                  </p>
+                )}
+
                 <div className="pt-2 text-center">
                   <button
                     type="submit"
-                    className="inline-flex rounded-full bg-[#E85E1B] px-8 py-3 text-[16px] font-semibold text-white transition hover:opacity-90"
+                    disabled={loading}
+                    className="inline-flex rounded-full bg-[#E85E1B] px-8 py-3 text-[16px] font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
                   >
-                    GỬI TIN NHẮN
+                    {loading ? "ĐANG GỬI..." : "GỬI TIN NHẮN"}
                   </button>
                 </div>
               </form>
             </div>
 
-            {/* RIGHT INFO */}
             <div className="pt-2">
               <h2 className="text-[#E85E1B] text-[36px] md:text-[54px] font-bold uppercase leading-[1.05]">
                 LIÊN HỆ
