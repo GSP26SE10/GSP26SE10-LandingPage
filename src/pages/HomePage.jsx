@@ -163,10 +163,10 @@ export default function HomePage() {
 
       try {
         const [menuRes, menuDishRes] = await Promise.all([
-          fetch("https://gsp26se10-be.fly.dev/api/menu", {
+          fetch("https://bookfet.nport.link/api/menu", {
             headers: { accept: "*/*" },
           }),
-          fetch("https://gsp26se10-be.fly.dev/api/menu-dish", {
+          fetch("https://bookfet.nport.link/api/menu-dish", {
             headers: { accept: "*/*" },
           }),
         ]);
@@ -226,13 +226,13 @@ export default function HomePage() {
 
       try {
         const [menuRes, menuDishRes, partyCategoryRes] = await Promise.all([
-          fetch("https://gsp26se10-be.fly.dev/api/menu", {
+          fetch("https://bookfet.nport.link/api/menu", {
             headers: { accept: "*/*" },
           }),
-          fetch("https://gsp26se10-be.fly.dev/api/menu-dish", {
+          fetch("https://bookfet.nport.link/api/menu-dish", {
             headers: { accept: "*/*" },
           }),
-          fetch("https://gsp26se10-be.fly.dev/api/party-category", {
+          fetch("https://bookfet.nport.link/api/party-category", {
             headers: { accept: "*/*" },
           }),
         ]);
@@ -873,7 +873,7 @@ function EstimateTool() {
       };
 
       const suggestRes = await fetch(
-        "https://gsp26se10-be.fly.dev/api/menu-suggestion/ai-suggest",
+        "https://bookfet.nport.link/api/menu-suggestion/ai-suggest",
         {
           method: "POST",
           headers: {
@@ -900,10 +900,10 @@ function EstimateTool() {
       }
 
       const [menuRes, menuDishRes] = await Promise.all([
-        fetch("https://gsp26se10-be.fly.dev/api/menu", {
+        fetch("https://bookfet.nport.link/api/menu", {
           headers: { accept: "*/*" },
         }),
-        fetch("https://gsp26se10-be.fly.dev/api/menu-dish", {
+        fetch("https://bookfet.nport.link/api/menu-dish", {
           headers: { accept: "*/*" },
         }),
       ]);
